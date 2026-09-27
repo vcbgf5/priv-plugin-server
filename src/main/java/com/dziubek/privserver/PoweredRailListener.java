@@ -6,11 +6,13 @@ import org.bukkit.block.data.Rail;
 import org.bukkit.entity.Minecart;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.vehicle.VehicleMoveEvent;
+import org.bukkit.event.vehicle.VehicleUpdateEvent;
 import org.bukkit.util.Vector;
 
-/** Na każdym ruchu wagonika sprawdza, czy stoi na szynie ze sztywną prędkością (patrz
- * PoweredRailManager) i jeśli tak, wymusza tę prędkość - nawet ponad wanilijny limit. */
+/** Co tick (na każdym wagoniku, nawet stojącym w miejscu) sprawdza, czy stoi na szynie ze sztywną
+ * prędkością (patrz PoweredRailManager) i jeśli tak, wymusza tę prędkość - nawet ponad wanilijny
+ * limit. VehicleMoveEvent NIE nadaje się do tego - nie odpala się wcale, dopóki wagonik już się
+ * nie porusza, więc nigdy by nie "odpalił" stojącego wagonika z miejsca. */
 public class PoweredRailListener implements Listener {
 
     private final PrivServerPlugin plugin;
@@ -20,11 +22,11 @@ public class PoweredRailListener implements Listener {
     }
 
     @EventHandler
-    public void onMove(VehicleMoveEvent event) {
+    public void onUpdate(VehicleUpdateEvent event) {
         if (!(event.getVehicle() instanceof Minecart cart)) {
             return;
         }
-        Block block = event.getTo().getBlock();
+        Block block = cart.getLocation().getBlock();
         Double blocksPerSecond = plugin.getPoweredRails().getPower(block);
         if (blocksPerSecond == null) {
             return;
