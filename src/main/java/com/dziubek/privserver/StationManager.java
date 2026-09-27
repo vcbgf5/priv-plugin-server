@@ -144,6 +144,22 @@ public class StationManager {
         return stations.get(locationKey(button.getLocation()));
     }
 
+    /** Slot startowy, do którego ten wagonik jest przypisany (po UUID) - niezależnie od tego,
+     * gdzie akurat fizycznie jest. Używane do naprowadzania go z powrotem na WŁASNE miejsce
+     * (patrz StationStopListener), nie na jakikolwiek inny slot, obok którego akurat przejeżdża. */
+    public Location getAssignedSlot(Minecart cart) {
+        UUID id = cart.getUniqueId();
+        for (Station station : stations.values()) {
+            List<UUID> cartIds = station.cartIds();
+            for (int i = 0; i < cartIds.size(); i++) {
+                if (id.equals(cartIds.get(i))) {
+                    return station.slots().get(i);
+                }
+            }
+        }
+        return null;
+    }
+
     /** Wagonik faktycznie przypisany do tego slotu (po UUID, nawet jeśli odjechał) - albo null. */
     public Minecart getTrackedCart(Station station, int slotIndex) {
         UUID id = station.cartIds().get(slotIndex);
@@ -215,22 +231,6 @@ public class StationManager {
                 entity.remove();
             }
         }
-    }
-
-    /** Numer (1, 2, ...) slotu, jeśli ten blok jest jakimś slotem startowym - albo null. Używane
-     * do auto-zatrzymywania wracających wagoników TYLKO na ich WŁASNYM slocie (patrz
-     * StationStopListener) - wagonik "1" ma się zatrzymać na slocie 1, nie na slocie 2. */
-    public Integer getSlotNumber(Block block) {
-        String key = locationKey(block.getLocation());
-        for (Station station : stations.values()) {
-            List<Location> slots = station.slots();
-            for (int i = 0; i < slots.size(); i++) {
-                if (locationKey(slots.get(i)).equals(key)) {
-                    return i + 1;
-                }
-            }
-        }
-        return null;
     }
 
     private static String locationKey(Location location) {

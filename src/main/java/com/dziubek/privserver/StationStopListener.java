@@ -1,16 +1,24 @@
 package com.dziubek.privserver;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Minecart;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.vehicle.VehicleUpdateEvent;
 import org.bukkit.util.Vector;
 
-/** Wagonik oznaczony tagiem "N" (patrz StationManager.tag()), który wraca na slot startowy
- * DOKŁADNIE o numerze N (np. po okrążeniu pętli), zatrzymuje się tam automatycznie - wagonik "1"
- * zatrzymuje się tylko na slocie 1, wagonik "2" tylko na slocie 2, nie na cudzym miejscu. */
+/**
+ * Naprowadza każdy oznaczony wagonik ("1", "2", ...) na jego WŁASNY przypisany slot (patrz
+ * StationManager.getAssignedSlot()) - nie na jakikolwiek inny slot, obok którego akurat
+ * przejeżdża. Gdy jest blisko (w promieniu GUIDE_RADIUS, np. wagonik "1" stojący koło slotu 2),
+ * jest delikatnie "dociągany" w stronę własnego miejsca; gdy jest już bardzo blisko, zatrzymuje
+ * się tam dokładnie.
+ */
 public class StationStopListener implements Listener {
 
+    private static final double GUIDE_RADIUS = 1.5;
+    private static final double SNAP_DISTANCE = 0.3;
+    private static final double GUIDE_SPEED_PER_TICK = 0.15;
     private static final Vector ZERO = new Vector(0, 0, 0);
     private static final double VANILLA_MAX_SPEED = 0.4;
 
@@ -25,18 +33,24 @@ public class StationStopListener implements Listener {
         if (!(event.getVehicle() instanceof Minecart cart)) {
             return;
         }
-        if (cart.getVelocity().lengthSquared() < 0.0001) {
+        Location slot = plugin.getStations().getAssignedSlot(cart);
+        if (slot == null) {
             return;
         }
-        Integer slotNumber = plugin.getStations().getSlotNumber(cart.getLocation().getBlock());
-        if (slotNumber == null) {
+
+        double distance = cart.getLocation().distance(slot);
+        if (distance > GUIDE_RADIUS) {
             return;
         }
-        String name = cart.getCustomName();
-        if (name == null || !name.endsWith(String.valueOf(slotNumber))) {
+
+        if (distance <= SNAP_DISTANCE) {
+            cart.teleport(slot);
+            cart.setVelocity(ZERO);
+            cart.setMaxSpeed(VANILLA_MAX_SPEED);
             return;
         }
-        cart.setVelocity(ZERO);
-        cart.setMaxSpeed(VANILLA_MAX_SPEED);
+
+        Vector toward = slot.toVector().subtract(cart.getLocation().toVector()).normalize().multiply(GUIDE_SPEED_PER_TICK);
+        cart.setVelocity(toward);
     }
 }
