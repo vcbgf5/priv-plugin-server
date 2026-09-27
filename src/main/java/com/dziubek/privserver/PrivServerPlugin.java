@@ -32,6 +32,7 @@ public class PrivServerPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new MotdListener(this), this);
         getServer().getPluginManager().registerEvents(new PoweredRailListener(this), this);
         getServer().getPluginManager().registerEvents(new StationListener(this), this);
+        getServer().getPluginManager().registerEvents(new StationStopListener(this), this);
 
         getServer().getScheduler().runTaskTimer(this, wagons::tick, WAGON_TICK_INTERVAL, WAGON_TICK_INTERVAL);
 

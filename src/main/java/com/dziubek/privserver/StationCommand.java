@@ -15,6 +15,9 @@ import org.bukkit.util.RayTraceResult;
  * /stacja dodaj - patrzysz na wagonik, zapamiętuje go jako slot startowy (max 2 na stację).
  * /stacja przypisz <bloki/s> - patrzysz na przycisk/dźwignię, wiąże zapamiętane sloty z nim.
  * /stacja usun - patrzysz na przycisk stacji, usuwa ją.
+ * /stacja wagonik wroc <1|2> - patrzysz na przycisk, teleportuje przypisany wagonik z powrotem na miejsce i zatrzymuje go.
+ * /stacja wagonik usun <1|2> - patrzysz na przycisk, usuwa (despawnuje) przypisany wagonik.
+ * /stacja wagonik reset - patrzysz na przycisk, usuwa oba stare wagoniki i stawia nowe na wyznaczonych miejscach.
  */
 public class StationCommand implements CommandExecutor {
 
@@ -41,9 +44,72 @@ public class StationCommand implements CommandExecutor {
             case "dodaj" -> handleAdd(player);
             case "przypisz" -> handleAssign(player, args);
             case "usun" -> handleRemove(player);
+            case "wagonik" -> handleWagonik(player, args);
             default -> sendHelp(player);
         }
         return true;
+    }
+
+    private void handleWagonik(Player player, String[] args) {
+        if (args.length < 2) {
+            player.sendMessage(ChatColor.RED + "Użycie: /stacja wagonik <wroc|usun> <1|2> albo /stacja wagonik reset");
+            return;
+        }
+
+        Block target = player.getTargetBlockExact((int) LOOK_RANGE);
+        if (target == null || !isTrigger(target.getType())) {
+            player.sendMessage(ChatColor.RED + "Musisz patrzeć na przycisk stacji.");
+            return;
+        }
+        StationManager.Station station = plugin.getStations().getStation(target);
+        if (station == null) {
+            player.sendMessage(ChatColor.RED + "Ten przycisk nie jest stacją.");
+            return;
+        }
+
+        String sub = args[1].toLowerCase();
+        if (sub.equals("reset")) {
+            plugin.getStations().resetCarts(station);
+            player.sendMessage(ChatColor.GREEN + "Zresetowano wagoniki tej stacji.");
+            return;
+        }
+
+        if (args.length < 3) {
+            player.sendMessage(ChatColor.RED + "Podaj numer wagonika: /stacja wagonik " + sub + " <1|2>");
+            return;
+        }
+        int slotIndex = parseSlotIndex(args[2], station.slots().size());
+        if (slotIndex < 0) {
+            player.sendMessage(ChatColor.RED + "Nieprawidłowy numer - ta stacja ma " + station.slots().size() + " miejsc.");
+            return;
+        }
+
+        switch (sub) {
+            case "wroc" -> {
+                if (plugin.getStations().returnCart(station, slotIndex)) {
+                    player.sendMessage(ChatColor.GREEN + "Wagonik " + args[2] + " wrócił na miejsce.");
+                } else {
+                    player.sendMessage(ChatColor.RED + "Nie ma przypisanego wagonika " + args[2] + " (może już nie istnieje).");
+                }
+            }
+            case "usun" -> {
+                if (plugin.getStations().removeCart(station, slotIndex)) {
+                    player.sendMessage(ChatColor.YELLOW + "Usunięto wagonik " + args[2] + ".");
+                } else {
+                    player.sendMessage(ChatColor.RED + "Nie ma przypisanego wagonika " + args[2] + ".");
+                }
+            }
+            default -> player.sendMessage(ChatColor.RED + "Użycie: /stacja wagonik <wroc|usun> <1|2> albo /stacja wagonik reset");
+        }
+    }
+
+    private static int parseSlotIndex(String raw, int slotCount) {
+        try {
+            int number = Integer.parseInt(raw);
+            return number >= 1 && number <= slotCount ? number - 1 : -1;
+        } catch (NumberFormatException e) {
+            return -1;
+        }
     }
 
     private void handleAdd(Player player) {
@@ -104,6 +170,9 @@ public class StationCommand implements CommandExecutor {
         player.sendMessage(ChatColor.GOLD + "/stacja dodaj " + ChatColor.GRAY + "- patrz na wagonik, zapamiętaj go (max 2)");
         player.sendMessage(ChatColor.GOLD + "/stacja przypisz <bloki/s> " + ChatColor.GRAY + "- patrz na przycisk, przypisz zapamiętane wagoniki");
         player.sendMessage(ChatColor.GOLD + "/stacja usun " + ChatColor.GRAY + "- patrz na przycisk stacji, usuń ją");
+        player.sendMessage(ChatColor.GOLD + "/stacja wagonik wroc <1|2> " + ChatColor.GRAY + "- teleportuje wagonik z powrotem na miejsce");
+        player.sendMessage(ChatColor.GOLD + "/stacja wagonik usun <1|2> " + ChatColor.GRAY + "- usuwa przypisany wagonik");
+        player.sendMessage(ChatColor.GOLD + "/stacja wagonik reset " + ChatColor.GRAY + "- usuwa oba stare, stawia nowe na miejscach");
     }
 
     private static Entity rayTraceEntity(Player player) {

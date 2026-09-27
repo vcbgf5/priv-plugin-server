@@ -34,7 +34,7 @@ commands:
     permission-message: "§cNie masz uprawnien do tej komendy."
   stacja:
     description: Konfiguracja stacji rollercoastera (przycisk wystrzeliwujacy wagoniki).
-    usage: /stacja <dodaj|przypisz|usun> [bloki/sekunde]
+    usage: /stacja <dodaj|przypisz|usun|wagonik> [bloki/sekunde | wroc|usun|reset [1|2]]
     permission: privserver.stacja
     permission-message: "§cNie masz uprawnien do tej komendy."
 permissions:
