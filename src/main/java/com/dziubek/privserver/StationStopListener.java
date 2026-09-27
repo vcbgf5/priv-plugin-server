@@ -12,7 +12,9 @@ import org.bukkit.util.Vector;
  * StationManager.getAssignedSlot()) - nie na jakikolwiek inny slot, obok którego akurat
  * przejeżdża. Gdy jest blisko (w promieniu GUIDE_RADIUS, np. wagonik "1" stojący koło slotu 2),
  * jest delikatnie "dociągany" w stronę własnego miejsca; gdy jest już bardzo blisko, zatrzymuje
- * się tam dokładnie.
+ * się tam dokładnie. Pomija wagoniki tuż po odpaleniu ze stacji (patrz
+ * StationDispatcher.isInGracePeriod()), żeby naprowadzanie nie ciągnęło ich z powrotem zanim
+ * zdążą odjechać.
  */
 public class StationStopListener implements Listener {
 
@@ -31,6 +33,9 @@ public class StationStopListener implements Listener {
     @EventHandler
     public void onUpdate(VehicleUpdateEvent event) {
         if (!(event.getVehicle() instanceof Minecart cart)) {
+            return;
+        }
+        if (StationDispatcher.isInGracePeriod(cart.getUniqueId())) {
             return;
         }
         Location slot = plugin.getStations().getAssignedSlot(cart);
