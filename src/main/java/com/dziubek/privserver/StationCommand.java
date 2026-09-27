@@ -1,5 +1,6 @@
 package com.dziubek.privserver;
 
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -52,7 +53,7 @@ public class StationCommand implements CommandExecutor {
 
     private void handleWagonik(Player player, String[] args) {
         if (args.length < 2) {
-            player.sendMessage(ChatColor.RED + "Użycie: /stacja wagonik <wroc|usun> <1|2> albo /stacja wagonik reset");
+            sendWagonikUsage(player);
             return;
         }
 
@@ -75,7 +76,7 @@ public class StationCommand implements CommandExecutor {
         }
 
         if (args.length < 3) {
-            player.sendMessage(ChatColor.RED + "Podaj numer wagonika: /stacja wagonik " + sub + " <1|2>");
+            ChatUtil.sendUsage(player, "/stacja wagonik " + sub + " <1|2>", "podaj numer wagonika (1 albo 2)");
             return;
         }
         int slotIndex = parseSlotIndex(args[2], station.slots().size());
@@ -99,8 +100,14 @@ public class StationCommand implements CommandExecutor {
                     player.sendMessage(ChatColor.RED + "Nie ma przypisanego wagonika " + args[2] + ".");
                 }
             }
-            default -> player.sendMessage(ChatColor.RED + "Użycie: /stacja wagonik <wroc|usun> <1|2> albo /stacja wagonik reset");
+            default -> sendWagonikUsage(player);
         }
+    }
+
+    private void sendWagonikUsage(Player player) {
+        ChatUtil.sendHelpLine(player, "/stacja wagonik wroc <1|2>", "teleportuje wagonik z powrotem na miejsce");
+        ChatUtil.sendHelpLine(player, "/stacja wagonik usun <1|2>", "usuwa przypisany wagonik");
+        ChatUtil.sendHelpLine(player, "/stacja wagonik reset", "usuwa oba stare, stawia nowe na miejscach");
     }
 
     private static int parseSlotIndex(String raw, int slotCount) {
@@ -119,18 +126,22 @@ public class StationCommand implements CommandExecutor {
             return;
         }
         if (!plugin.getStations().addPendingSlot(player, cart)) {
-            player.sendMessage(ChatColor.RED + "Stacja może mieć maksymalnie 2 wagoniki - użyj /stacja przypisz.");
+            player.sendMessage(ChatUtil.sentenceWithCommand("Stacja może mieć maksymalnie 2 wagoniki - użyj ",
+                    "/stacja przypisz <bloki/s>", "patrz na przycisk, przypisz zapamiętane wagoniki", ".",
+                    NamedTextColor.RED));
             return;
         }
         int count = plugin.getStations().pendingCount(player);
-        player.sendMessage(ChatColor.GREEN + "Zapamiętano wagonik (" + count + "/2). "
-                + (count < 2 ? "Zaznacz kolejny albo od razu /stacja przypisz <bloki/s>."
-                : "Teraz /stacja przypisz <bloki/s>, patrząc na przycisk."));
+        String suffix = count < 2 ? "" : ", patrząc na przycisk.";
+        String prefix = "Zapamiętano wagonik (" + count + "/2). "
+                + (count < 2 ? "Zaznacz kolejny albo od razu " : "Teraz ");
+        player.sendMessage(ChatUtil.sentenceWithCommand(prefix, "/stacja przypisz <bloki/s>",
+                "patrz na przycisk, przypisz zapamiętane wagoniki", suffix, NamedTextColor.GREEN));
     }
 
     private void handleAssign(Player player, String[] args) {
         if (args.length < 2) {
-            player.sendMessage(ChatColor.RED + "Użycie: /stacja przypisz <bloki/sekunde>");
+            ChatUtil.sendUsage(player, "/stacja przypisz <bloki/sekunde>", "patrz na przycisk, przypisz zapamiętane wagoniki");
             return;
         }
         double speed;
@@ -146,7 +157,8 @@ public class StationCommand implements CommandExecutor {
             return;
         }
         if (!plugin.getStations().createStation(player, target, speed)) {
-            player.sendMessage(ChatColor.RED + "Najpierw zaznacz przynajmniej jeden wagonik: /stacja dodaj.");
+            player.sendMessage(ChatUtil.sentenceWithCommand("Najpierw zaznacz przynajmniej jeden wagonik: ",
+                    "/stacja dodaj", "patrz na wagonik, zapamiętaj go (max 2)", ".", NamedTextColor.RED));
             return;
         }
         player.sendMessage(ChatColor.GREEN + "Stacja gotowa - ten przycisk wystrzeli wagoniki z prędkością "
@@ -167,12 +179,12 @@ public class StationCommand implements CommandExecutor {
     }
 
     private void sendHelp(Player player) {
-        player.sendMessage(ChatColor.GOLD + "/stacja dodaj " + ChatColor.GRAY + "- patrz na wagonik, zapamiętaj go (max 2)");
-        player.sendMessage(ChatColor.GOLD + "/stacja przypisz <bloki/s> " + ChatColor.GRAY + "- patrz na przycisk, przypisz zapamiętane wagoniki");
-        player.sendMessage(ChatColor.GOLD + "/stacja usun " + ChatColor.GRAY + "- patrz na przycisk stacji, usuń ją");
-        player.sendMessage(ChatColor.GOLD + "/stacja wagonik wroc <1|2> " + ChatColor.GRAY + "- teleportuje wagonik z powrotem na miejsce");
-        player.sendMessage(ChatColor.GOLD + "/stacja wagonik usun <1|2> " + ChatColor.GRAY + "- usuwa przypisany wagonik");
-        player.sendMessage(ChatColor.GOLD + "/stacja wagonik reset " + ChatColor.GRAY + "- usuwa oba stare, stawia nowe na miejscach");
+        ChatUtil.sendHelpLine(player, "/stacja dodaj", "patrz na wagonik, zapamiętaj go (max 2)");
+        ChatUtil.sendHelpLine(player, "/stacja przypisz <bloki/s>", "patrz na przycisk, przypisz zapamiętane wagoniki");
+        ChatUtil.sendHelpLine(player, "/stacja usun", "patrz na przycisk stacji, usuń ją");
+        ChatUtil.sendHelpLine(player, "/stacja wagonik wroc <1|2>", "teleportuje wagonik z powrotem na miejsce");
+        ChatUtil.sendHelpLine(player, "/stacja wagonik usun <1|2>", "usuwa przypisany wagonik");
+        ChatUtil.sendHelpLine(player, "/stacja wagonik reset", "usuwa oba stare, stawia nowe na miejscach");
     }
 
     private static Entity rayTraceEntity(Player player) {

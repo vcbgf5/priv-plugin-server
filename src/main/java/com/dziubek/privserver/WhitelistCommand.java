@@ -25,7 +25,7 @@ public class WhitelistCommand implements CommandExecutor {
         switch (args[0].toLowerCase()) {
             case "dodaj" -> {
                 if (args.length < 2) {
-                    sender.sendMessage(ChatColor.RED + "Użycie: /bialalista dodaj <gracz>");
+                    ChatUtil.sendUsage(sender, "/bialalista dodaj <gracz>", "dodaje gracza do białej listy");
                     return true;
                 }
                 if (whitelist.add(args[1])) {
@@ -36,7 +36,7 @@ public class WhitelistCommand implements CommandExecutor {
             }
             case "usun" -> {
                 if (args.length < 2) {
-                    sender.sendMessage(ChatColor.RED + "Użycie: /bialalista usun <gracz>");
+                    ChatUtil.sendUsage(sender, "/bialalista usun <gracz>", "usuwa gracza z białej listy");
                     return true;
                 }
                 if (whitelist.remove(args[1])) {
@@ -67,10 +67,10 @@ public class WhitelistCommand implements CommandExecutor {
     }
 
     private void sendHelp(CommandSender sender) {
-        sender.sendMessage(ChatColor.GOLD + "/bialalista dodaj <gracz> " + ChatColor.GRAY + "- dodaje gracza do białej listy");
-        sender.sendMessage(ChatColor.GOLD + "/bialalista usun <gracz> " + ChatColor.GRAY + "- usuwa gracza z białej listy");
-        sender.sendMessage(ChatColor.GOLD + "/bialalista lista " + ChatColor.GRAY + "- pokazuje białą listę");
-        sender.sendMessage(ChatColor.GOLD + "/bialalista wlacz " + ChatColor.GRAY + "- włącza białą listę (serwer prywatny)");
-        sender.sendMessage(ChatColor.GOLD + "/bialalista wylacz " + ChatColor.GRAY + "- wyłącza białą listę (serwer otwarty)");
+        ChatUtil.sendHelpLine(sender, "/bialalista dodaj <gracz>", "dodaje gracza do białej listy");
+        ChatUtil.sendHelpLine(sender, "/bialalista usun <gracz>", "usuwa gracza z białej listy");
+        ChatUtil.sendHelpLine(sender, "/bialalista lista", "pokazuje białą listę");
+        ChatUtil.sendHelpLine(sender, "/bialalista wlacz", "włącza białą listę (serwer prywatny)");
+        ChatUtil.sendHelpLine(sender, "/bialalista wylacz", "wyłącza białą listę (serwer otwarty)");
     }
 }

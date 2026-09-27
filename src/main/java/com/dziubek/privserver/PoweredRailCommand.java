@@ -30,7 +30,7 @@ public class PoweredRailCommand implements CommandExecutor {
             return true;
         }
         if (args.length < 1) {
-            sender.sendMessage(ChatColor.RED + "Użycie: /setpower <bloki/sekunde> (0 = wyłącz)");
+            ChatUtil.sendUsage(sender, "/setpower <bloki/sekunde>", "wymusza predkosc na szynie, na ktora patrzysz (0 = wylacz)");
             return true;
         }
 
