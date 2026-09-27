@@ -9,6 +9,7 @@ public class PrivServerPlugin extends JavaPlugin {
     private WhitelistManager whitelist;
     private WagonManager wagons;
     private PoweredRailManager poweredRails;
+    private StationManager stations;
 
     @Override
     public void onEnable() {
@@ -18,15 +19,19 @@ public class PrivServerPlugin extends JavaPlugin {
         wagons = new WagonManager();
         poweredRails = new PoweredRailManager(this);
         poweredRails.load();
+        stations = new StationManager(this);
+        stations.load();
 
         getCommand("bialalista").setExecutor(new WhitelistCommand(this));
         getCommand("zamknij").setExecutor(new CloseServerCommand(this));
         getCommand("setpower").setExecutor(new PoweredRailCommand(this));
         getCommand("wagon").setExecutor(new WagonCommand(this));
+        getCommand("stacja").setExecutor(new StationCommand(this));
 
         getServer().getPluginManager().registerEvents(new WhitelistListener(this), this);
         getServer().getPluginManager().registerEvents(new MotdListener(this), this);
         getServer().getPluginManager().registerEvents(new PoweredRailListener(this), this);
+        getServer().getPluginManager().registerEvents(new StationListener(this), this);
 
         getServer().getScheduler().runTaskTimer(this, wagons::tick, WAGON_TICK_INTERVAL, WAGON_TICK_INTERVAL);
 
@@ -45,5 +50,9 @@ public class PrivServerPlugin extends JavaPlugin {
 
     public PoweredRailManager getPoweredRails() {
         return poweredRails;
+    }
+
+    public StationManager getStations() {
+        return stations;
     }
 }

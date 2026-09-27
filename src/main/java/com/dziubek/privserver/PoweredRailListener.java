@@ -1,8 +1,6 @@
 package com.dziubek.privserver;
 
 import org.bukkit.block.Block;
-import org.bukkit.block.data.BlockData;
-import org.bukkit.block.data.Rail;
 import org.bukkit.entity.Minecart;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -36,7 +34,7 @@ public class PoweredRailListener implements Listener {
 
         Vector direction = cart.getVelocity();
         if (direction.lengthSquared() < 0.0001) {
-            direction = fallbackDirection(block.getBlockData());
+            direction = RailUtil.fallbackDirection(block.getBlockData());
         }
         direction.normalize().multiply(blocksPerTick);
 
@@ -47,23 +45,5 @@ public class PoweredRailListener implements Listener {
             cart.setMaxSpeed(blocksPerTick);
         }
         cart.setVelocity(direction);
-    }
-
-    private static Vector fallbackDirection(BlockData data) {
-        if (!(data instanceof Rail rail)) {
-            return new Vector(1, 0, 0);
-        }
-        return switch (rail.getShape()) {
-            case NORTH_SOUTH -> new Vector(0, 0, 1);
-            case EAST_WEST -> new Vector(1, 0, 0);
-            case ASCENDING_EAST -> new Vector(1, 0.5, 0);
-            case ASCENDING_WEST -> new Vector(-1, 0.5, 0);
-            case ASCENDING_NORTH -> new Vector(0, 0.5, -1);
-            case ASCENDING_SOUTH -> new Vector(0, 0.5, 1);
-            case SOUTH_EAST -> new Vector(1, 0, 1);
-            case SOUTH_WEST -> new Vector(-1, 0, 1);
-            case NORTH_WEST -> new Vector(-1, 0, -1);
-            case NORTH_EAST -> new Vector(1, 0, -1);
-        };
     }
 }
