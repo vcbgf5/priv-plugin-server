@@ -22,10 +22,10 @@ public class PrivServerPlugin extends JavaPlugin {
         getCommand("bialalista").setExecutor(new WhitelistCommand(this));
         getCommand("zamknij").setExecutor(new CloseServerCommand(this));
         getCommand("setpower").setExecutor(new PoweredRailCommand(this));
+        getCommand("wagon").setExecutor(new WagonCommand(this));
 
         getServer().getPluginManager().registerEvents(new WhitelistListener(this), this);
         getServer().getPluginManager().registerEvents(new MotdListener(this), this);
-        getServer().getPluginManager().registerEvents(new WagonListener(this), this);
         getServer().getPluginManager().registerEvents(new PoweredRailListener(this), this);
 
         getServer().getScheduler().runTaskTimer(this, wagons::tick, WAGON_TICK_INTERVAL, WAGON_TICK_INTERVAL);

@@ -7,7 +7,8 @@ description: >
   Plugin dla serwera prywatnego - wlasna biala lista (niezalezna od whitelist.json Vanilli,
   wlacz/wylacz komenda /bialalista) z wlasnym komunikatem po odrzuceniu, MOTD tego serwera
   ustawione na "Serwer prywatny - skontaktuj sie z administratorem", komenda /zamknij (tymczasowe
-  zamkniecie serwera + zmiana MOTD) oraz laczenie wagonikow w pociag (shift+PPM na dwoch z rzedu).
+  zamkniecie serwera + zmiana MOTD) oraz laczenie wagonikow w pociag komenda /wagon (patrz na
+  wagonik i wolaj /wagon - raz dla lokomotywy, raz dla przyczepy).
 commands:
   bialalista:
     description: Zarzadzanie wlasna biala lista tego serwera prywatnego.
@@ -25,6 +26,11 @@ commands:
     usage: /setpower <bloki/sekunde>
     permission: privserver.setpower
     permission-message: "§cNie masz uprawnien do tej komendy."
+  wagon:
+    description: Patrz na wagonik i wolaj te komende, zeby go zaznaczyc do laczenia w pociag.
+    usage: /wagon
+    permission: privserver.wagon
+    permission-message: "§cNie masz uprawnien do tej komendy."
 permissions:
   privserver.bialalista:
     description: Zarzadzanie biala lista serwera prywatnego.
@@ -35,3 +41,6 @@ permissions:
   privserver.setpower:
     description: Ustawianie wymuszonej predkosci na szynach.
     default: op
+  privserver.wagon:
+    description: Laczenie wagonikow w pociag.
+    default: true

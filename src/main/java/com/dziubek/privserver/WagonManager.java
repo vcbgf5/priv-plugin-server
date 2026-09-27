@@ -13,10 +13,10 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Łączenie wagoników w pociąg: gracz klika (z shiftem) pierwszy wagonik - "lokomotywę", potem
- * drugi - "przyczepę". Przyczepa co tick dostaje prędkość lokomotywy i jest "podciągana" na stały
- * dystans za nią, więc jadą razem jak połączony skład. Jeśli którykolwiek z pary zniknie
- * (zniszczony/rozładowany), para jest automatycznie usuwana.
+ * Łączenie wagoników w pociąg: gracz patrzy na pierwszy wagonik i woła /wagon - "lokomotywa",
+ * potem na drugi i znów /wagon - "przyczepa". Przyczepa co tick dostaje prędkość lokomotywy i
+ * jest "podciągana" na stały dystans za nią, więc jadą razem jak połączony skład. Jeśli
+ * którykolwiek z pary zniknie (zniszczony/rozładowany), para jest automatycznie usuwana.
  */
 public class WagonManager {
 
@@ -34,7 +34,7 @@ public class WagonManager {
 
         if (pending == null) {
             pendingSelection.put(player.getUniqueId(), clickedId);
-            player.sendMessage("§eZaznaczono lokomotywę. Shift+kliknij drugi wagonik, aby go doczepić.");
+            player.sendMessage("§eZaznaczono lokomotywę. Spójrz na drugi wagonik i wywołaj /wagon, aby go doczepić.");
             return;
         }
 
