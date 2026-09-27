@@ -20,10 +20,18 @@ commands:
     usage: /zamknij
     permission: privserver.zamknij
     permission-message: "§cNie masz uprawnien do tej komendy."
+  setpower:
+    description: Ustawia sztywna predkosc (bloki/s) na szynie, na ktora patrzysz. 0 = wylacz.
+    usage: /setpower <bloki/sekunde>
+    permission: privserver.setpower
+    permission-message: "§cNie masz uprawnien do tej komendy."
 permissions:
   privserver.bialalista:
     description: Zarzadzanie biala lista serwera prywatnego.
     default: op
   privserver.zamknij:
     description: Tymczasowe zamykanie/otwieranie serwera prywatnego.
+    default: op
+  privserver.setpower:
+    description: Ustawianie wymuszonej predkosci na szynach.
     default: op
