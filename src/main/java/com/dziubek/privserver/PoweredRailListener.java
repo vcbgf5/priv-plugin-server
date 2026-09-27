@@ -32,11 +32,20 @@ public class PoweredRailListener implements Listener {
             return;
         }
 
+        double blocksPerTick = blocksPerSecond / 20.0;
+
         Vector direction = cart.getVelocity();
         if (direction.lengthSquared() < 0.0001) {
             direction = fallbackDirection(block.getBlockData());
         }
-        direction.normalize().multiply(blocksPerSecond / 20.0);
+        direction.normalize().multiply(blocksPerTick);
+
+        // Minecraft sam przycina predkosc wagonika do jego wlasnego maxSpeed (domyslnie 0.4/tick =
+        // 8 blokow/s) na koncu kazdego ticku, wiec bez podniesienia tego limitu setVelocity()
+        // ponizej i tak zostalby cofniety do wanilijnego maksimum.
+        if (cart.getMaxSpeed() < blocksPerTick) {
+            cart.setMaxSpeed(blocksPerTick);
+        }
         cart.setVelocity(direction);
     }
 
