@@ -1,7 +1,7 @@
 name: PrivServer
 main: com.dziubek.privserver.PrivServerPlugin
 version: 1.0.0
-api-version: '1.21'
+api-version: '1.26'
 author: Dziubek
 description: >
   Plugin dla serwera prywatnego - wlasna biala lista (niezalezna od whitelist.json Vanilli,
