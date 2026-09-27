@@ -217,18 +217,20 @@ public class StationManager {
         }
     }
 
-    /** Czy ten blok jest slotem startowym jakiejkolwiek stacji - używane do auto-zatrzymywania
-     * wracających wagoników (patrz StationStopListener). */
-    public boolean isSlotLocation(Block block) {
+    /** Numer (1, 2, ...) slotu, jeśli ten blok jest jakimś slotem startowym - albo null. Używane
+     * do auto-zatrzymywania wracających wagoników TYLKO na ich WŁASNYM slocie (patrz
+     * StationStopListener) - wagonik "1" ma się zatrzymać na slocie 1, nie na slocie 2. */
+    public Integer getSlotNumber(Block block) {
         String key = locationKey(block.getLocation());
         for (Station station : stations.values()) {
-            for (Location slot : station.slots()) {
-                if (locationKey(slot).equals(key)) {
-                    return true;
+            List<Location> slots = station.slots();
+            for (int i = 0; i < slots.size(); i++) {
+                if (locationKey(slots.get(i)).equals(key)) {
+                    return i + 1;
                 }
             }
         }
-        return false;
+        return null;
     }
 
     private static String locationKey(Location location) {

@@ -6,8 +6,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.vehicle.VehicleUpdateEvent;
 import org.bukkit.util.Vector;
 
-/** Wagonik wracający na slot startowy jakiejkolwiek stacji (np. po okrążeniu pętli) zatrzymuje
- * się tam automatycznie - zamiast przejeżdżać dalej albo zderzać się z kolejnym wagonikiem. */
+/** Wagonik oznaczony tagiem "N" (patrz StationManager.tag()), który wraca na slot startowy
+ * DOKŁADNIE o numerze N (np. po okrążeniu pętli), zatrzymuje się tam automatycznie - wagonik "1"
+ * zatrzymuje się tylko na slocie 1, wagonik "2" tylko na slocie 2, nie na cudzym miejscu. */
 public class StationStopListener implements Listener {
 
     private static final Vector ZERO = new Vector(0, 0, 0);
@@ -27,7 +28,12 @@ public class StationStopListener implements Listener {
         if (cart.getVelocity().lengthSquared() < 0.0001) {
             return;
         }
-        if (!plugin.getStations().isSlotLocation(cart.getLocation().getBlock())) {
+        Integer slotNumber = plugin.getStations().getSlotNumber(cart.getLocation().getBlock());
+        if (slotNumber == null) {
+            return;
+        }
+        String name = cart.getCustomName();
+        if (name == null || !name.endsWith(String.valueOf(slotNumber))) {
             return;
         }
         cart.setVelocity(ZERO);
