@@ -17,3 +17,14 @@ motd:
 # Nazwy graczy (dokladnie jak w Minecraft, wielkosc liter nie ma znaczenia) dopuszczonych mimo
 # wlaczonej bialej listy - zarzadzane tez przez "/bialalista dodaj|usun|lista".
 whitelisted: []
+
+# Uzywane po komendzie "/zamknij" - stan TYLKO w pamieci (restart serwera zawsze go otwiera z
+# powrotem). Gdy zamkniety, kazdy oprocz operatorow dostaje ponizszy komunikat, NIEZALEZNIE od
+# bialej listy powyzej, a MOTD zmienia sie na ponizsze.
+closed-motd:
+  - '&4&lServer zamknięty'
+  - '&7Wróć za chwilę'
+
+closed-kick-message:
+  - '&4&lServer zamknięty'
+  - '&7Serwer jest tymczasowo zamknięty przez administratora.'

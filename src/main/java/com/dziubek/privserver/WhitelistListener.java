@@ -17,10 +17,13 @@ public class WhitelistListener implements Listener {
     @EventHandler
     public void onPreLogin(AsyncPlayerPreLoginEvent event) {
         WhitelistManager whitelist = plugin.getWhitelist();
-        if (!whitelist.isEnabled()) {
+        boolean isOp = Bukkit.getOfflinePlayer(event.getUniqueId()).isOp();
+
+        if (whitelist.isClosed() && !isOp) {
+            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, whitelist.getClosedKickMessage());
             return;
         }
-        if (Bukkit.getOfflinePlayer(event.getUniqueId()).isOp()) {
+        if (!whitelist.isEnabled() || isOp) {
             return;
         }
         if (whitelist.isWhitelisted(event.getName())) {

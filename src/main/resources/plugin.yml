@@ -1,12 +1,13 @@
 name: PrivServer
 main: com.dziubek.privserver.PrivServerPlugin
 version: 1.0.0
-api-version: '1.26'
+api-version: '1.21'
 author: Dziubek
 description: >
   Plugin dla serwera prywatnego - wlasna biala lista (niezalezna od whitelist.json Vanilli,
-  wlacz/wylacz komenda /bialalista) z wlasnym komunikatem po odrzuceniu, oraz MOTD tego
-  serwera ustawione na "Serwer prywatny - skontaktuj sie z administratorem".
+  wlacz/wylacz komenda /bialalista) z wlasnym komunikatem po odrzuceniu, MOTD tego serwera
+  ustawione na "Serwer prywatny - skontaktuj sie z administratorem", komenda /zamknij (tymczasowe
+  zamkniecie serwera + zmiana MOTD) oraz laczenie wagonikow w pociag (shift+PPM na dwoch z rzedu).
 commands:
   bialalista:
     description: Zarzadzanie wlasna biala lista tego serwera prywatnego.
@@ -14,7 +15,15 @@ commands:
     aliases: [whitelist, wl]
     permission: privserver.bialalista
     permission-message: "§cNie masz uprawnien do tej komendy."
+  zamknij:
+    description: Przelacza tymczasowe zamkniecie serwera (tylko operatorzy, zmienia MOTD).
+    usage: /zamknij
+    permission: privserver.zamknij
+    permission-message: "§cNie masz uprawnien do tej komendy."
 permissions:
   privserver.bialalista:
     description: Zarzadzanie biala lista serwera prywatnego.
+    default: op
+  privserver.zamknij:
+    description: Tymczasowe zamykanie/otwieranie serwera prywatnego.
     default: op

@@ -16,6 +16,9 @@ public class WhitelistManager {
     private final Set<String> whitelisted = new LinkedHashSet<>();
     private String kickMessage = "";
     private String motd = "";
+    private boolean closed = false;
+    private String closedMotd = "";
+    private String closedKickMessage = "";
 
     public WhitelistManager(PrivServerPlugin plugin) {
         this.plugin = plugin;
@@ -34,6 +37,8 @@ public class WhitelistManager {
 
         kickMessage = colorize(config.getStringList("kick-message"));
         motd = colorize(config.getStringList("motd"));
+        closedMotd = colorize(config.getStringList("closed-motd"));
+        closedKickMessage = colorize(config.getStringList("closed-kick-message"));
     }
 
     private static String colorize(List<String> lines) {
@@ -86,7 +91,22 @@ public class WhitelistManager {
     }
 
     public String getMotd() {
-        return motd;
+        return closed ? closedMotd : motd;
+    }
+
+    public boolean isClosed() {
+        return closed;
+    }
+
+    /** Przełącza tryb "zamknięty" (poza operatorami nikt nie wejdzie, MOTD pokazuje info o zamknięciu)
+     * - stan tylko w pamięci, restart serwera zawsze otwiera go z powrotem. */
+    public boolean toggleClosed() {
+        closed = !closed;
+        return closed;
+    }
+
+    public String getClosedKickMessage() {
+        return closedKickMessage;
     }
 
     private void persist() {
