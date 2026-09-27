@@ -1,0 +1,19 @@
+# Wlasna biala lista tego serwera (niezalezna od whitelist.json Vanilli) - wlacz/wylacz przez
+# komende "/bialalista wlacz" / "/bialalista wylacz". Gdy enabled: true, kazdy gracz, ktorego
+# nie ma na liscie "whitelisted" ponizej i ktory NIE jest operatorem (ops.json), zostaje
+# odrzucony przy probie wejscia z ponizszym komunikatem (kick-message). Operatorzy zawsze
+# wchodza normalnie, niezaleznie od listy.
+enabled: true
+
+kick-message:
+  - '&4&lSerwer prywatny'
+  - '&7Ten serwer jest prywatny - skontaktuj się z administratorem, aby dołączyć.'
+
+# MOTD (opis widoczny na liscie serwerow gracza) - 2 linijki.
+motd:
+  - '&4&lServer prywatny'
+  - '&7Skontaktuj się z administratorem'
+
+# Nazwy graczy (dokladnie jak w Minecraft, wielkosc liter nie ma znaczenia) dopuszczonych mimo
+# wlaczonej bialej listy - zarzadzane tez przez "/bialalista dodaj|usun|lista".
+whitelisted: []
